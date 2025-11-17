@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sửa sản phẩm - Truy xuất Nguồn gốc</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="{{ url_for('index') }}" class="navbar-brand">🌾 Truy xuất Nguồn gốc</a>
+            <div class="navbar-actions">
+                {% if user %}
+                    <span style="color: var(--primary-color); font-weight: 600;">👤 {{ user.full_name }}</span>
+                    <a href="{{ url_for('manage') }}" class="btn btn-secondary btn-small">Quản lý</a>
+                    <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-small">Đăng xuất</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn btn-secondary btn-small">Đăng nhập</a>
+                    <a href="{{ url_for('register') }}" class="btn btn-primary btn-small">Đăng ký</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <header>
+            <h1>✏️ Sửa sản phẩm</h1>
+            <p class="subtitle">Cập nhật thông tin sản phẩm</p>
+        </header>
+
+        <main>
+            <div class="form-container">
+                {% if error %}
+                <div class="alert alert-error">
+                    ⚠️ {{ error }}
+                </div>
+                {% endif %}
+
+                <form method="POST" action="{{ url_for('edit_product', product_id=product.id) }}" class="product-form">
+                    <div class="form-group">
+                        <label for="product_name">Tên sản phẩm <span class="required">*</span></label>
+                        <input 
+                            type="text" 
+                            id="product_name" 
+                            name="product_name" 
+                            required 
+                            value="{{ product.product_name }}"
+                            placeholder="Ví dụ: Lúa giống ST25"
+                            class="form-input"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="farmer_name">Hộ nông dân sản xuất <span class="required">*</span></label>
+                        <input 
+                            type="text" 
+                            id="farmer_name" 
+                            name="farmer_name" 
+                            value="{{ product.farmer_name }}"
+                            readonly
+                            class="form-input"
+                            style="background-color: #f5f5f5; cursor: not-allowed;"
+                        >
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="planting_date">Ngày trồng</label>
+                            <input 
+                                type="date" 
+                                id="planting_date" 
+                                name="planting_date" 
+                                value="{{ product.planting_date or '' }}"
+                                class="form-input"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="harvest_date">Ngày thu hoạch</label>
+                            <input 
+                                type="date" 
+                                id="harvest_date" 
+                                name="harvest_date" 
+                                value="{{ product.harvest_date or '' }}"
+                                class="form-input"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="production_area">Khu vực sản xuất</label>
+                        <input 
+                            type="text" 
+                            id="production_area" 
+                            name="production_area" 
+                            value="{{ product.production_area or '' }}"
+                            placeholder="Ví dụ: Xã An Phú, Huyện Cần Đước, Long An"
+                            class="form-input"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="production_process">Quy trình sản xuất</label>
+                        <textarea 
+                            id="production_process" 
+                            name="production_process" 
+                            rows="5" 
+                            placeholder="Mô tả quy trình sản xuất, chăm sóc..."
+                            class="form-input"
+                        >{{ product.production_process or '' }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="harvest_process">Quá trình thu hoạch</label>
+                        <textarea 
+                            id="harvest_process" 
+                            name="harvest_process" 
+                            rows="5" 
+                            placeholder="Mô tả quá trình thu hoạch, phương pháp thu hoạch, thời điểm thu hoạch..."
+                            class="form-input"
+                        >{{ product.harvest_process or '' }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="storage_method">Cách bảo quản</label>
+                        <textarea 
+                            id="storage_method" 
+                            name="storage_method" 
+                            rows="5" 
+                            placeholder="Mô tả cách bảo quản sản phẩm, nhiệt độ, độ ẩm, thời gian bảo quản..."
+                            class="form-input"
+                        >{{ product.storage_method or '' }}</textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-large">
+                            💾 Lưu thay đổi
+                        </button>
+                        <a href="{{ url_for('manage') }}" class="btn btn-secondary">Hủy</a>
+                    </div>
+                </form>
+            </div>
+        </main>
+
+        <footer>
+            <a href="{{ url_for('manage') }}" class="btn btn-link">← Quay lại quản lý sản phẩm</a>
+        </footer>
+    </div>
+</body>
+</html>
+

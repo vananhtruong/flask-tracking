@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý sản phẩm - Truy xuất Nguồn gốc</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="{{ url_for('index') }}" class="navbar-brand">🌾 Truy xuất Nguồn gốc</a>
+            <div class="navbar-actions">
+                {% if user %}
+                    <span style="color: var(--primary-color); font-weight: 600;">👤 {{ user.full_name }}</span>
+                    <a href="{{ url_for('create') }}" class="btn btn-primary btn-small">➕ Thêm mới</a>
+                    <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-small">Đăng xuất</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn btn-secondary btn-small">Đăng nhập</a>
+                    <a href="{{ url_for('register') }}" class="btn btn-primary btn-small">Đăng ký</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <header>
+            <h1>📋 Quản lý sản phẩm của tôi</h1>
+            <p class="subtitle">Xem, sửa và xóa sản phẩm của bạn</p>
+        </header>
+
+        <div class="actions">
+            <a href="{{ url_for('create') }}" class="btn btn-primary">➕ Thêm sản phẩm mới</a>
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">🏠 Về trang chủ</a>
+        </div>
+
+        <main>
+            <h2>Danh sách sản phẩm của tôi</h2>
+            
+            {% if products %}
+                <div class="products-grid">
+                    {% for product in products %}
+                    <div class="product-card">
+                        <div class="product-header">
+                            <h3>{{ product.product_name }}</h3>
+                            <span class="product-id">ID: {{ product.id }}</span>
+                        </div>
+                        <div class="product-info">
+                            <p><strong>Hộ sản xuất:</strong> {{ product.farmer_name }}</p>
+                            <p><strong>Khu vực:</strong> {{ product.production_area or 'Chưa cập nhật' }}</p>
+                            <p><strong>Ngày trồng:</strong> {{ product.planting_date or 'Chưa cập nhật' }}</p>
+                            <p><strong>Ngày thu hoạch:</strong> {{ product.harvest_date or 'Chưa cập nhật' }}</p>
+                            <p><strong>Ngày tạo:</strong> {{ product.created_at }}</p>
+                        </div>
+                        <div class="product-actions">
+                            <a href="{{ url_for('product', product_id=product.id) }}" class="btn btn-view">Xem chi tiết</a>
+                            <a href="{{ url_for('edit_product', product_id=product.id) }}" class="btn btn-secondary">✏️ Sửa</a>
+                            <a href="{{ url_for('delete_product', product_id=product.id) }}" 
+                               class="btn btn-danger" 
+                               onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">🗑️ Xóa</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <p>📦 Bạn chưa có sản phẩm nào</p>
+                    <p>Hãy bắt đầu bằng cách thêm sản phẩm mới!</p>
+                    <a href="{{ url_for('create') }}" class="btn btn-primary">Thêm sản phẩm đầu tiên</a>
+                </div>
+            {% endif %}
+        </main>
+
+        <footer>
+            <a href="{{ url_for('index') }}" class="btn btn-link">← Quay lại trang chủ</a>
+        </footer>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,18 @@
+{
+  "products": [
+    {
+      "id": "1763407358510",
+      "product_name": "Lúa giống st2533",
+      "farmer_name": "văn anh",
+      "planting_date": "2025-11-10",
+      "harvest_date": "2025-11-20",
+      "production_area": "Thăng điền đà nẵng1",
+      "production_process": "123123",
+      "harvest_process": "123",
+      "storage_method": "123",
+      "qr_code": "qrcodes/1763407358510.png",
+      "created_by": "vananh",
+      "created_at": "2025-11-18 02:22:38"
+    }
+  ]
+}

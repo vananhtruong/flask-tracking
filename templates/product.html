@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết sản phẩm - Truy xuất Nguồn gốc</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="{{ url_for('index') }}" class="navbar-brand">🌾 Truy xuất Nguồn gốc</a>
+            <div class="navbar-actions">
+                <a href="{{ url_for('index') }}" class="btn btn-secondary btn-small">🏠 Trang chủ</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        {% if error %}
+            <div class="error-page">
+                <h1>❌ Lỗi</h1>
+                <p>{{ error }}</p>
+                <a href="{{ url_for('index') }}" class="btn btn-primary">Quay lại trang chủ</a>
+            </div>
+        {% elif product %}
+            <header>
+                <h1>📋 Thông tin sản phẩm</h1>
+                <p class="subtitle">Truy xuất nguồn gốc nông sản</p>
+            </header>
+
+            <main>
+                <div class="product-detail">
+                    <div class="product-detail-card">
+                        <div class="product-title-section">
+                            <h2>{{ product.product_name }}</h2>
+                            <span class="product-badge">ID: {{ product.id }}</span>
+                        </div>
+
+                        <div class="product-info-section">
+                            <div class="info-item">
+                                <div class="info-label">🏠 Hộ sản xuất</div>
+                                <div class="info-value">{{ product.farmer_name }}</div>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="info-label">📍 Khu vực sản xuất</div>
+                                <div class="info-value">{{ product.production_area or 'Chưa cập nhật' }}</div>
+                            </div>
+
+                            <div class="info-row">
+                                <div class="info-item">
+                                    <div class="info-label">🌱 Ngày trồng</div>
+                                    <div class="info-value">{{ product.planting_date or 'Chưa cập nhật' }}</div>
+                                </div>
+
+                                <div class="info-item">
+                                    <div class="info-label">✂️ Ngày thu hoạch</div>
+                                    <div class="info-value">{{ product.harvest_date or 'Chưa cập nhật' }}</div>
+                                </div>
+                            </div>
+
+                            {% if product.production_process %}
+                            <div class="info-item">
+                                <div class="info-label">📝 Quy trình sản xuất</div>
+                                <div class="info-value info-text">{{ product.production_process }}</div>
+                            </div>
+                            {% endif %}
+
+                            {% if product.harvest_process %}
+                            <div class="info-item">
+                                <div class="info-label">🌾 Quá trình thu hoạch</div>
+                                <div class="info-value info-text">{{ product.harvest_process }}</div>
+                            </div>
+                            {% endif %}
+
+                            {% if product.storage_method %}
+                            <div class="info-item">
+                                <div class="info-label">📦 Cách bảo quản</div>
+                                <div class="info-value info-text">{{ product.storage_method }}</div>
+                            </div>
+                            {% endif %}
+
+                            <div class="info-item">
+                                <div class="info-label">📅 Ngày tạo</div>
+                                <div class="info-value">{{ product.created_at }}</div>
+                            </div>
+                        </div>
+
+                        <div class="qr-section">
+                            <h3>📱 Mã QR truy xuất</h3>
+                            <div class="qr-container">
+                                <img 
+                                    src="{{ url_for('static', filename=product.qr_code) }}" 
+                                    alt="QR Code sản phẩm" 
+                                    class="qr-image"
+                                >
+                                <p class="qr-note">Quét mã QR này để xem thông tin sản phẩm</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <footer>
+                <a href="{{ url_for('index') }}" class="btn btn-link">← Quay lại trang chủ</a>
+            </footer>
+        {% endif %}
+    </div>
+</body>
+</html>
+

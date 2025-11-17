@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - Truy xuất Nguồn gốc</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="{{ url_for('index') }}" class="navbar-brand">🌾 Truy xuất Nguồn gốc</a>
+            <div class="navbar-actions">
+                <a href="{{ url_for('register') }}" class="btn btn-primary btn-small">Đăng ký</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <header>
+            <h1>🔐 Đăng nhập</h1>
+            <p class="subtitle">Đăng nhập để quản lý sản phẩm</p>
+        </header>
+
+        <main>
+            <div class="form-container">
+                {% if error %}
+                <div class="alert alert-error">
+                    ⚠️ {{ error }}
+                </div>
+                {% endif %}
+
+                <form method="POST" action="{{ url_for('login') }}" class="product-form">
+                    <div class="form-group">
+                        <label for="username">Tên đăng nhập <span class="required">*</span></label>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            required 
+                            placeholder="Nhập tên đăng nhập"
+                            class="form-input"
+                            autofocus
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Mật khẩu <span class="required">*</span></label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            required 
+                            placeholder="Nhập mật khẩu"
+                            class="form-input"
+                        >
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-large">
+                            🔑 Đăng nhập
+                        </button>
+                    </div>
+                </form>
+
+                <div class="auth-links">
+                    <p>Chưa có tài khoản? <a href="{{ url_for('register') }}">Đăng ký ngay</a></p>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <a href="{{ url_for('index') }}" class="btn btn-link">← Quay lại trang chủ</a>
+        </footer>
+    </div>
+</body>
+</html>
+
