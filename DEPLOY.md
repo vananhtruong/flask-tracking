@@ -35,7 +35,7 @@
    - **Root Directory:** (để trống)
    - **Runtime:** `Python 3`
    - **Build Command:** `pip install -r requirements.txt`
-   - **Start Command:** `gunicorn app:app`
+   - **Start Command:** `python -m gunicorn app:app --bind 0.0.0.0:$PORT`
 
 4. **Environment Variables (Tùy chọn):**
    - `FLASK_ENV=production`
