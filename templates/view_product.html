@@ -183,6 +183,9 @@
                         </div>
 
                         <div class="product-actions" style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid var(--bg-light);">
+                            <a href="{{ url_for('ai_report', product_id=product.id) }}" class="btn btn-primary btn-large" style="background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%); box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);">
+                                🤖 Tạo báo cáo truy xuất AI
+                            </a>
                             <a href="{{ url_for('edit_product', product_id=product.id) }}" class="btn btn-primary btn-large">
                                 ✏️ Sửa sản phẩm
                             </a>

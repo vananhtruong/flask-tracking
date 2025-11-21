@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo Cáo Truy Xuất AI - {{ product.product_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .ai-report-wrapper {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+        
+        .ai-report-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .ai-report-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .report-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        
+        .report-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        
+        .report-header h2 {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+        
+        .report-body {
+            padding: 2.5rem;
+        }
+        
+        .section {
+            margin-bottom: 2.5rem;
+        }
+        
+        .section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 3px solid #667eea;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+        
+        .info-card {
+            background: #f8f9fa;
+            padding: 1.25rem;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .info-card strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .info-card span {
+            color: #333;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        
+        .transparency-grid {
+            display: grid;
+            gap: 0.75rem;
+        }
+        
+        .transparency-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .transparency-item.incomplete {
+            border-left-color: #ff9800;
+        }
+        
+        .transparency-item .icon {
+            font-size: 1.5rem;
+        }
+        
+        .transparency-item .text {
+            flex: 1;
+        }
+        
+        .transparency-item strong {
+            color: #333;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        
+        .transparency-item span {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .score-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1.25rem;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-left: 1rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+        
+        .season-analysis {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+        }
+        
+        .season-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .season-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .season-item strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .standards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .standard-card {
+            background: #f8f9fa;
+            padding: 1.25rem;
+            border-radius: 12px;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .standard-card.warning {
+            border-left-color: #ff9800;
+        }
+        
+        .compliance-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 700;
+            margin-top: 0.5rem;
+        }
+        
+        .compliance-badge.excellent {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .compliance-badge.good {
+            background: #2196f3;
+            color: white;
+        }
+        
+        .compliance-badge.average {
+            background: #ff9800;
+            color: white;
+        }
+        
+        .compliance-badge.needs-improvement {
+            background: #f44336;
+            color: white;
+        }
+        
+        .market-suggestions {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .market-card {
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.1) 0%, rgba(33, 150, 243, 0.05) 100%);
+            padding: 1.25rem;
+            border-radius: 12px;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .market-card .type {
+            color: #2196f3;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+        
+        .market-card .suggestion {
+            color: #333;
+            line-height: 1.7;
+            margin-bottom: 0.5rem;
+        }
+        
+        .market-card .price {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .recommendations-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .recommendation-item {
+            background: #f8f9fa;
+            padding: 1.25rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #2196f3;
+            line-height: 1.7;
+            color: #333;
+        }
+        
+        .recommendation-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid #e0e0e0;
+        }
+        
+        .btn-export {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-export:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .report-header h1 {
+                font-size: 2rem;
+            }
+            
+            .report-body {
+                padding: 1.5rem;
+            }
+            
+            .section-title {
+                font-size: 1.2rem;
+            }
+            
+            .stats-grid,
+            .season-grid,
+            .standards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ai-report-wrapper">
+        <nav class="navbar" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);">
+            <div class="navbar-content">
+                <a href="{{ url_for('index') }}" class="navbar-brand" style="color: white;">🌱 Truy xuất Nguồn gốc</a>
+                <div class="navbar-actions">
+                    {% if user %}
+                        <span style="color: white; font-weight: 600;">👤 {{ user.full_name }}</span>
+                        <a href="{{ url_for('view_product', product_id=product.id) }}" class="btn btn-secondary btn-small" style="background: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255, 255, 255, 0.3);">← Quay lại</a>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+        
+        <div class="ai-report-container">
+            <div class="ai-report-card">
+                <div class="report-header">
+                    <h1>🤖 Báo Cáo Truy Xuất AI</h1>
+                    <h2>PHÂN TÍCH THÔNG MINH - ĐÁNH GIÁ TIÊU CHUẨN - GỢI Ý THỊ TRƯỜNG</h2>
+                </div>
+                
+                <div class="report-body">
+                    <!-- Thông tin tổng quan -->
+                    <div class="section">
+                        <div class="section-title">
+                            📋 THÔNG TIN TỔNG QUAN
+                        </div>
+                        <div class="info-grid">
+                            <div class="info-card">
+                                <strong>Tên sản phẩm</strong>
+                                <span>{{ product.product_name }}</span>
+                            </div>
+                            <div class="info-card">
+                                <strong>Nhà sản xuất</strong>
+                                <span>{{ product.farmer_name }}</span>
+                            </div>
+                            <div class="info-card">
+                                <strong>Ngày sản xuất</strong>
+                                <span>{{ product.created_at.split(' ')[0] if product.created_at else 'N/A' }}</span>
+                            </div>
+                            <div class="info-card">
+                                <strong>Khu vực</strong>
+                                <span>{{ product.production_area or 'Chưa cập nhật' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Đánh giá tính minh bạch -->
+                    <div class="section">
+                        <div class="section-title">
+                            ✅ ĐÁNH GIÁ TÍNH MINH BẠCH
+                            <span class="score-badge">{{ analysis.score }}/100 điểm</span>
+                        </div>
+                        <div class="transparency-grid">
+                            <div class="transparency-item {{ 'incomplete' if not analysis.transparency.basic_info else '' }}">
+                                <span class="icon">{{ '✅' if analysis.transparency.basic_info else '⚠️' }}</span>
+                                <div class="text">
+                                    <strong>Thông tin cơ bản</strong>
+                                    <span>{{ 'Đầy đủ' if analysis.transparency.basic_info else 'Chưa đầy đủ' }}</span>
+                                </div>
+                            </div>
+                            <div class="transparency-item {{ 'incomplete' if not analysis.transparency.production_process else '' }}">
+                                <span class="icon">{{ '✅' if analysis.transparency.production_process else '⚠️' }}</span>
+                                <div class="text">
+                                    <strong>Quy trình sản xuất</strong>
+                                    <span>{{ 'Đầy đủ' if analysis.transparency.production_process else 'Cần bổ sung' }}</span>
+                                </div>
+                            </div>
+                            <div class="transparency-item {{ 'incomplete' if not analysis.transparency.harvest_process else '' }}">
+                                <span class="icon">{{ '✅' if analysis.transparency.harvest_process else '⚠️' }}</span>
+                                <div class="text">
+                                    <strong>Quá trình thu hoạch</strong>
+                                    <span>{{ 'Đầy đủ' if analysis.transparency.harvest_process else 'Cần bổ sung' }}</span>
+                                </div>
+                            </div>
+                            <div class="transparency-item {{ 'incomplete' if not analysis.transparency.storage_method else '' }}">
+                                <span class="icon">{{ '✅' if analysis.transparency.storage_method else '⚠️' }}</span>
+                                <div class="text">
+                                    <strong>Cách bảo quản</strong>
+                                    <span>{{ 'Đầy đủ' if analysis.transparency.storage_method else 'Cần bổ sung' }}</span>
+                                </div>
+                            </div>
+                            <div class="transparency-item {{ 'incomplete' if not analysis.transparency.production_media else '' }}">
+                                <span class="icon">{{ '✅' if analysis.transparency.production_media else '⚠️' }}</span>
+                                <div class="text">
+                                    <strong>Media sản xuất</strong>
+                                    <span>{{ 'Có (' + analysis.stats.production_media_count|string + ' file)' if analysis.transparency.production_media else 'Chưa có' }}</span>
+                                </div>
+                            </div>
+                            <div class="transparency-item {{ 'incomplete' if not analysis.transparency.harvest_media else '' }}">
+                                <span class="icon">{{ '✅' if analysis.transparency.harvest_media else '⚠️' }}</span>
+                                <div class="text">
+                                    <strong>Media thu hoạch</strong>
+                                    <span>{{ 'Có (' + analysis.stats.harvest_media_count|string + ' file)' if analysis.transparency.harvest_media else 'Chưa có' }}</span>
+                                </div>
+                            </div>
+                            <div class="transparency-item {{ 'incomplete' if not analysis.transparency.dates else '' }}">
+                                <span class="icon">{{ '✅' if analysis.transparency.dates else '⚠️' }}</span>
+                                <div class="text">
+                                    <strong>Trạng thái xác minh</strong>
+                                    <span>{{ 'Đã xác minh' if analysis.transparency.dates else 'Chưa xác minh' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Phân tích mùa vụ và năng suất -->
+                    {% if analysis.season_analysis %}
+                    <div class="section">
+                        <div class="section-title">📅 PHÂN TÍCH MÙA VỤ VÀ NĂNG SUẤT</div>
+                        <div class="season-analysis">
+                            <div class="season-grid">
+                                {% if analysis.season_analysis.season %}
+                                <div class="season-item">
+                                    <strong>Mùa vụ</strong>
+                                    <span>{{ analysis.season_analysis.season }}</span>
+                                </div>
+                                {% endif %}
+                                {% if analysis.season_analysis.growth_period %}
+                                <div class="season-item">
+                                    <strong>Thời gian sinh trưởng</strong>
+                                    <span>{{ analysis.season_analysis.growth_period }}</span>
+                                </div>
+                                {% endif %}
+                                <div class="season-item">
+                                    <strong>Dự đoán năng suất</strong>
+                                    <span>{{ analysis.season_analysis.yield_prediction }}</span>
+                                </div>
+                                <div class="season-item">
+                                    <strong>Thời điểm thu hoạch</strong>
+                                    <span>{{ analysis.season_analysis.harvest_timing }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Đánh giá tuân thủ tiêu chuẩn số hóa -->
+                    {% if analysis.standards_compliance %}
+                    <div class="section">
+                        <div class="section-title">📊 ĐÁNH GIÁ TUÂN THỦ TIÊU CHUẨN SỐ HÓA</div>
+                        <div class="standards-grid">
+                            <div class="standard-card {{ 'warning' if not analysis.standards_compliance.has_digital_records else '' }}">
+                                <strong>📝 Hồ sơ số hóa</strong>
+                                <p>{{ 'Có' if analysis.standards_compliance.has_digital_records else 'Chưa có' }}</p>
+                                <span>{{ 'Đã lưu trữ thông tin quy trình và ngày tháng' if analysis.standards_compliance.has_digital_records else 'Cần bổ sung thông tin quy trình và ngày tháng' }}</span>
+                            </div>
+                            <div class="standard-card {{ 'warning' if not analysis.standards_compliance.has_media_evidence else '' }}">
+                                <strong>📸 Bằng chứng media</strong>
+                                <p>{{ 'Có' if analysis.standards_compliance.has_media_evidence else 'Chưa có' }}</p>
+                                <span>{{ 'Có video/hình ảnh quá trình sản xuất' if analysis.standards_compliance.has_media_evidence else 'Nên thêm video/hình ảnh để tăng độ tin cậy' }}</span>
+                            </div>
+                            <div class="standard-card {{ 'warning' if not analysis.standards_compliance.has_complete_info else '' }}">
+                                <strong>✅ Thông tin đầy đủ</strong>
+                                <p>{{ 'Có' if analysis.standards_compliance.has_complete_info else 'Chưa đầy đủ' }}</p>
+                                <span>{{ 'Đã có đầy đủ thông tin cơ bản và quy trình' if analysis.standards_compliance.has_complete_info else 'Cần bổ sung thông tin quy trình' }}</span>
+                            </div>
+                            <div class="standard-card {{ 'warning' if not analysis.standards_compliance.has_storage_info else '' }}">
+                                <strong>📦 Thông tin bảo quản</strong>
+                                <p>{{ 'Có' if analysis.standards_compliance.has_storage_info else 'Chưa có' }}</p>
+                                <span>{{ 'Đã có hướng dẫn bảo quản' if analysis.standards_compliance.has_storage_info else 'Nên thêm thông tin bảo quản' }}</span>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1.5rem; text-align: center; padding: 1.5rem; background: #f8f9fa; border-radius: 12px;">
+                            <strong style="color: #667eea; font-size: 1.1rem;">Mức độ tuân thủ:</strong>
+                            <span class="compliance-badge {% if analysis.standards_compliance.compliance_score >= 80 %}excellent{% elif analysis.standards_compliance.compliance_score >= 60 %}good{% elif analysis.standards_compliance.compliance_score >= 40 %}average{% else %}needs-improvement{% endif %}">
+                                {{ analysis.standards_compliance.compliance_level }} ({{ analysis.standards_compliance.compliance_score }}/100)
+                            </span>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Gợi ý thị trường và giá cả -->
+                    {% if analysis.market_suggestions %}
+                    <div class="section">
+                        <div class="section-title">💼 GỢI Ý THỊ TRƯỜNG VÀ GIÁ CẢ</div>
+                        <div class="market-suggestions">
+                            {% for suggestion in analysis.market_suggestions %}
+                            <div class="market-card">
+                                <div class="type">{{ suggestion.type }}</div>
+                                <div class="suggestion">{{ suggestion.suggestion }}</div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Phân tích -->
+                    <div class="section">
+                        <div class="section-title">📈 PHÂN TÍCH THỐNG KÊ</div>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value">{{ analysis.stats.scan_count }}</div>
+                                <div class="stat-label">Số lượt quét QR</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">{{ 'Có' if product.production_process else 'Không' }}</div>
+                                <div class="stat-label">Quy trình sản xuất</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">
+                                    {% if product.storage_method %}
+                                        {% if product.storage_method|length > 15 %}
+                                            {{ product.storage_method[:15] }}...
+                                        {% else %}
+                                            {{ product.storage_method }}
+                                        {% endif %}
+                                    {% else %}
+                                        Chưa có
+                                    {% endif %}
+                                </div>
+                                <div class="stat-label">Cách bảo quản</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Khuyến nghị -->
+                    <div class="section">
+                        <div class="section-title">💡 KHUYẾN NGHỊ CẢI THIỆN</div>
+                        <ul class="recommendations-list">
+                            {% for recommendation in analysis.recommendations %}
+                            <li class="recommendation-item">
+                                {{ recommendation }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    
+                    <!-- Action buttons -->
+                    <div class="action-buttons">
+                        <a href="{{ url_for('view_product', product_id=product.id) }}" class="btn btn-secondary">
+                            ← Quay lại chi tiết sản phẩm
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
