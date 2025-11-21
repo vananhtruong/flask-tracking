@@ -610,6 +610,123 @@ footer {
     color: var(--primary-dark);
 }
 
+/* Contact Section */
+.contact-section {
+    background: linear-gradient(135deg, rgba(46, 125, 50, 0.05) 0%, rgba(76, 175, 80, 0.1) 100%);
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px solid rgba(46, 125, 50, 0.1);
+}
+
+.contact-info {
+    background: var(--bg-white) !important;
+    padding: 1rem !important;
+}
+
+.contact-info p {
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+}
+
+.contact-info p:last-child {
+    margin-bottom: 0;
+}
+
+.contact-info a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.contact-info a:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+.contact-info strong {
+    color: var(--primary-dark);
+    display: inline-block;
+    min-width: 120px;
+}
+
+/* Media Gallery */
+.media-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.media-item {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: var(--bg-light);
+}
+
+.media-item:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.media-content {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    max-height: 300px;
+}
+
+.media-content video {
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+    background: #000;
+}
+
+.media-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    padding: 1rem;
+    background: var(--bg-light);
+    border-radius: 8px;
+}
+
+.media-preview .media-item {
+    flex: 0 0 auto;
+}
+
+.media-preview .media-content {
+    max-width: 200px;
+    max-height: 150px;
+}
+
+/* File Input Styling */
+input[type="file"] {
+    padding: 10px;
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-white);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+input[type="file"]:hover {
+    border-color: var(--primary-light);
+    background: var(--bg-light);
+}
+
+input[type="file"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     header h1 {
@@ -670,5 +787,13 @@ footer {
 
     .form-container {
         padding: 1.25rem;
+    }
+
+    .media-gallery {
+        grid-template-columns: 1fr;
+    }
+
+    .media-content {
+        max-height: 250px;
     }
 }

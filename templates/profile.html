@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng ký - Truy xuất Nguồn gốc</title>
+    <title>Thông tin cá nhân - Truy xuất Nguồn gốc</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
@@ -11,15 +11,22 @@
         <div class="navbar-content">
             <a href="{{ url_for('index') }}" class="navbar-brand">🌱 Truy xuất Nguồn gốc</a>
             <div class="navbar-actions">
-                <a href="{{ url_for('login') }}" class="btn btn-secondary btn-small">Đăng nhập</a>
+                {% if user %}
+                    <span style="color: var(--primary-color); font-weight: 600;">👤 {{ user.full_name }}</span>
+                    <a href="{{ url_for('manage') }}" class="btn btn-secondary btn-small">Quản lý</a>
+                    <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-small">Đăng xuất</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn btn-secondary btn-small">Đăng nhập</a>
+                    <a href="{{ url_for('register') }}" class="btn btn-primary btn-small">Đăng ký</a>
+                {% endif %}
             </div>
         </div>
     </nav>
     
     <div class="container">
         <header>
-            <h1>📝 Đăng ký tài khoản</h1>
-            <p class="subtitle">Tạo tài khoản mới để quản lý sản phẩm</p>
+            <h1>👤 Thông tin cá nhân</h1>
+            <p class="subtitle">Xem và cập nhật thông tin của bạn</p>
         </header>
 
         <main>
@@ -30,7 +37,13 @@
                 </div>
                 {% endif %}
 
-                <form method="POST" action="{{ url_for('register') }}" class="product-form">
+                {% if success %}
+                <div class="alert" style="background: #e8f5e9; color: #2e7d32; border-left: 4px solid var(--primary-color);">
+                    ✅ {{ success }}
+                </div>
+                {% endif %}
+
+                <form method="POST" action="{{ url_for('profile') }}" class="product-form">
                     <div class="form-group">
                         <label for="full_name">Họ và tên <span class="required">*</span></label>
                         <input 
@@ -38,48 +51,24 @@
                             id="full_name" 
                             name="full_name" 
                             required 
+                            value="{{ user.full_name }}"
                             placeholder="Ví dụ: Nguyễn Văn A"
                             class="form-input"
-                            autofocus
                         >
                     </div>
 
                     <div class="form-group">
-                        <label for="username">Tên đăng nhập <span class="required">*</span></label>
+                        <label for="username">Tên đăng nhập</label>
                         <input 
                             type="text" 
                             id="username" 
                             name="username" 
-                            required 
-                            placeholder="Ví dụ: nongdan01"
+                            value="{{ user.username }}"
+                            readonly
                             class="form-input"
+                            style="background-color: #f5f5f5; cursor: not-allowed;"
                         >
-                        <small class="form-hint">Tên đăng nhập phải là duy nhất</small>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password">Mật khẩu <span class="required">*</span></label>
-                        <input 
-                            type="password" 
-                            id="password" 
-                            name="password" 
-                            required 
-                            placeholder="Ít nhất 6 ký tự"
-                            class="form-input"
-                        >
-                        <small class="form-hint">Mật khẩu phải có ít nhất 6 ký tự</small>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="confirm_password">Xác nhận mật khẩu <span class="required">*</span></label>
-                        <input 
-                            type="password" 
-                            id="confirm_password" 
-                            name="confirm_password" 
-                            required 
-                            placeholder="Nhập lại mật khẩu"
-                            class="form-input"
-                        >
+                        <small class="form-hint">Tên đăng nhập không thể thay đổi</small>
                     </div>
 
                     <div class="form-group">
@@ -88,6 +77,7 @@
                             type="tel" 
                             id="phone" 
                             name="phone" 
+                            value="{{ user.phone or '' }}"
                             placeholder="Ví dụ: 0901234567"
                             class="form-input"
                         >
@@ -99,6 +89,7 @@
                             type="email" 
                             id="email" 
                             name="email" 
+                            value="{{ user.email or '' }}"
                             placeholder="Ví dụ: nongdan@example.com"
                             class="form-input"
                         >
@@ -112,19 +103,26 @@
                             rows="3" 
                             placeholder="Ví dụ: Xã An Phú, Huyện Cần Đước, Tỉnh Long An"
                             class="form-input"
-                        ></textarea>
+                        >{{ user.address or '' }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Thông tin tài khoản</label>
+                        <div class="info-value" style="margin-top: 0.5rem;">
+                            <p><strong>Ngày tạo:</strong> {{ user.created_at }}</p>
+                            {% if user.updated_at %}
+                            <p><strong>Cập nhật lần cuối:</strong> {{ user.updated_at }}</p>
+                            {% endif %}
+                        </div>
                     </div>
 
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary btn-large">
-                            ✅ Đăng ký
+                            💾 Lưu thay đổi
                         </button>
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary">Hủy</a>
                     </div>
                 </form>
-
-                <div class="auth-links">
-                    <p>Đã có tài khoản? <a href="{{ url_for('login') }}">Đăng nhập ngay</a></p>
-                </div>
             </div>
         </main>
 

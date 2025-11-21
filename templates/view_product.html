@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chi tiết sản phẩm - Truy xuất Nguồn gốc</title>
+    <title>Chi tiết sản phẩm - Quản lý</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
@@ -11,7 +11,15 @@
         <div class="navbar-content">
             <a href="{{ url_for('index') }}" class="navbar-brand">🌱 Truy xuất Nguồn gốc</a>
             <div class="navbar-actions">
-                <a href="{{ url_for('index') }}" class="btn btn-secondary btn-small">🏠 Trang chủ</a>
+                {% if user %}
+                    <span style="color: var(--primary-color); font-weight: 600;">👤 {{ user.full_name }}</span>
+                    <a href="{{ url_for('profile') }}" class="btn btn-secondary btn-small">Thông tin</a>
+                    <a href="{{ url_for('manage') }}" class="btn btn-secondary btn-small">Quản lý</a>
+                    <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-small">Đăng xuất</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn btn-secondary btn-small">Đăng nhập</a>
+                    <a href="{{ url_for('register') }}" class="btn btn-primary btn-small">Đăng ký</a>
+                {% endif %}
             </div>
         </div>
     </nav>
@@ -21,12 +29,12 @@
             <div class="error-page">
                 <h1>❌ Lỗi</h1>
                 <p>{{ error }}</p>
-                <a href="{{ url_for('index') }}" class="btn btn-primary">Quay lại trang chủ</a>
+                <a href="{{ url_for('manage') }}" class="btn btn-primary">Quay lại quản lý</a>
             </div>
         {% elif product %}
             <header>
-                <h1>📋 Thông tin sản phẩm</h1>
-                <p class="subtitle">Truy xuất nguồn gốc nông sản</p>
+                <h1>📋 Chi tiết sản phẩm của tôi</h1>
+                <p class="subtitle">Xem và quản lý sản phẩm</p>
             </header>
 
             <main>
@@ -42,26 +50,6 @@
                                 <div class="info-label">🏠 Hộ sản xuất</div>
                                 <div class="info-value">{{ product.farmer_name }}</div>
                             </div>
-
-                            {% if farmer_contact %}
-                            <div class="info-item contact-section">
-                                <div class="info-label">📞 Thông tin liên hệ</div>
-                                <div class="info-value contact-info">
-                                    {% if farmer_contact.phone %}
-                                    <p><strong>📱 Số điện thoại:</strong> <a href="tel:{{ farmer_contact.phone }}">{{ farmer_contact.phone }}</a></p>
-                                    {% endif %}
-                                    {% if farmer_contact.email %}
-                                    <p><strong>📧 Email:</strong> <a href="mailto:{{ farmer_contact.email }}">{{ farmer_contact.email }}</a></p>
-                                    {% endif %}
-                                    {% if farmer_contact.address %}
-                                    <p><strong>📍 Địa chỉ:</strong> {{ farmer_contact.address }}</p>
-                                    {% endif %}
-                                    {% if not farmer_contact.phone and not farmer_contact.email and not farmer_contact.address %}
-                                    <p style="color: var(--text-light); font-style: italic;">Chưa cập nhật thông tin liên hệ</p>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            {% endif %}
 
                             <div class="info-item">
                                 <div class="info-label">📍 Khu vực sản xuất</div>
@@ -145,6 +133,13 @@
                                 <div class="info-label">📅 Ngày tạo</div>
                                 <div class="info-value">{{ product.created_at }}</div>
                             </div>
+
+                            {% if product.updated_at %}
+                            <div class="info-item">
+                                <div class="info-label">🔄 Cập nhật lần cuối</div>
+                                <div class="info-value">{{ product.updated_at }}</div>
+                            </div>
+                            {% endif %}
                         </div>
 
                         <div class="qr-section">
@@ -154,16 +149,39 @@
                                     src="{{ url_for('static', filename=product.qr_code) }}" 
                                     alt="QR Code sản phẩm" 
                                     class="qr-image"
+                                    id="qr-image"
                                 >
                                 <p class="qr-note">Quét mã QR này để xem thông tin sản phẩm</p>
+                                <div style="margin-top: 1rem; display: flex; justify-content: center;">
+                                    <a 
+                                        href="{{ url_for('static', filename=product.qr_code) }}" 
+                                        download="{{ product.product_name|replace(' ', '_') }}_QR_{{ product.id }}.png"
+                                        class="btn btn-primary btn-small"
+                                        style="text-decoration: none;"
+                                    >
+                                        ⬇️ Tải QR Code
+                                    </a>
+                                </div>
                             </div>
+                        </div>
+
+                        <div class="product-actions" style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid var(--bg-light);">
+                            <a href="{{ url_for('edit_product', product_id=product.id) }}" class="btn btn-primary btn-large">
+                                ✏️ Sửa sản phẩm
+                            </a>
+                            <a href="{{ url_for('delete_product', product_id=product.id) }}" 
+                               class="btn btn-danger btn-large" 
+                               onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">
+                                🗑️ Xóa sản phẩm
+                            </a>
+                            <a href="{{ url_for('manage') }}" class="btn btn-secondary">← Quay lại quản lý</a>
                         </div>
                     </div>
                 </div>
             </main>
 
             <footer>
-                <a href="{{ url_for('index') }}" class="btn btn-link">← Quay lại trang chủ</a>
+                <a href="{{ url_for('manage') }}" class="btn btn-link">← Quay lại quản lý sản phẩm</a>
             </footer>
         {% endif %}
     </div>

@@ -1,11 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, session
 from functools import wraps
+from werkzeug.utils import secure_filename
 import json
 import os
 import qrcode
 from datetime import datetime
 import time
 import hashlib
+import shutil
 
 app = Flask(__name__)
 # Sử dụng biến môi trường cho secret key khi deploy
@@ -16,10 +18,18 @@ DATA_DIR = 'data'
 DATA_FILE = os.path.join(DATA_DIR, 'data.json')
 USERS_FILE = os.path.join(DATA_DIR, 'users.json')
 QRCODE_DIR = 'static/qrcodes'
+UPLOAD_DIR = 'static/uploads'
+
+# Cấu hình upload
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'mp4', 'mov', 'avi', 'mkv', 'webm'}
+MAX_FILE_SIZE = 100 * 1024 * 1024  # 100MB
 
 # Tạo thư mục data và qrcodes nếu chưa tồn tại
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(QRCODE_DIR, exist_ok=True)
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+os.makedirs(os.path.join(UPLOAD_DIR, 'production'), exist_ok=True)
+os.makedirs(os.path.join(UPLOAD_DIR, 'harvest'), exist_ok=True)
 
 def load_data():
     """Đọc dữ liệu từ data.json, tạo file mới nếu chưa có"""
@@ -79,6 +89,50 @@ def login_required(f):
             return redirect(url_for('login', next=request.url))
         return f(*args, **kwargs)
     return decorated_function
+
+def allowed_file(filename):
+    """Kiểm tra extension file có được phép không"""
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def is_image_file(filename):
+    """Kiểm tra file có phải là hình ảnh không"""
+    image_extensions = {'png', 'jpg', 'jpeg', 'gif'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in image_extensions
+
+def is_video_file(filename):
+    """Kiểm tra file có phải là video không"""
+    video_extensions = {'mp4', 'mov', 'avi', 'mkv', 'webm'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in video_extensions
+
+def save_uploaded_files(files, product_id, upload_type):
+    """Lưu các file đã upload và trả về danh sách đường dẫn"""
+    saved_files = []
+    if not files:
+        return saved_files
+    
+    upload_folder = os.path.join(UPLOAD_DIR, upload_type, product_id)
+    os.makedirs(upload_folder, exist_ok=True)
+    
+    for file in files:
+        if file and file.filename and allowed_file(file.filename):
+            # Tạo tên file an toàn
+            filename = secure_filename(file.filename)
+            # Thêm timestamp để tránh trùng tên
+            timestamp = str(int(time.time() * 1000))
+            name, ext = os.path.splitext(filename)
+            new_filename = f"{name}_{timestamp}{ext}"
+            file_path = os.path.join(upload_folder, new_filename)
+            
+            try:
+                file.save(file_path)
+                # Lưu đường dẫn tương đối để hiển thị
+                relative_path = f"uploads/{upload_type}/{product_id}/{new_filename}"
+                saved_files.append(relative_path)
+            except Exception as e:
+                print(f"Lỗi khi lưu file {filename}: {str(e)}")
+                continue
+    
+    return saved_files
 
 def generate_qrcode(product_id, base_url):
     """Tạo mã QR cho sản phẩm"""
@@ -181,11 +235,19 @@ def register():
             if user.get('username') == username:
                 return render_template('register.html', error='Tên đăng nhập đã tồn tại!')
         
+        # Lấy thông tin liên hệ
+        phone = request.form.get('phone', '').strip()
+        email = request.form.get('email', '').strip()
+        address = request.form.get('address', '').strip()
+        
         # Tạo user mới
         new_user = {
             'username': username,
             'password': hash_password(password),
             'full_name': full_name,
+            'phone': phone,
+            'email': email,
+            'address': address,
             'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         }
         
@@ -207,6 +269,84 @@ def logout():
     """Đăng xuất"""
     session.clear()
     return redirect(url_for('index'))
+
+@app.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    """Trang thông tin cá nhân - xem và sửa"""
+    current_username = session.get('user_id')
+    users_data = load_users()
+    
+    # Tìm user hiện tại
+    current_user = None
+    user_index = -1
+    for i, user in enumerate(users_data.get('users', [])):
+        if user.get('username') == current_username:
+            current_user = user
+            user_index = i
+            break
+    
+    if not current_user:
+        return redirect(url_for('index'))
+    
+    if request.method == 'POST':
+        # Cập nhật thông tin
+        full_name = request.form.get('full_name', '').strip()
+        phone = request.form.get('phone', '').strip()
+        email = request.form.get('email', '').strip()
+        address = request.form.get('address', '').strip()
+        
+        if not full_name:
+            user_info = {
+                'username': current_user.get('username'),
+                'full_name': current_user.get('full_name', ''),
+                'phone': current_user.get('phone', ''),
+                'email': current_user.get('email', ''),
+                'address': current_user.get('address', ''),
+                'created_at': current_user.get('created_at', ''),
+                'updated_at': current_user.get('updated_at', '')
+            }
+            return render_template('profile.html', user=user_info, error='Vui lòng điền họ và tên!')
+        
+        # Cập nhật thông tin user
+        current_user['full_name'] = full_name
+        current_user['phone'] = phone
+        current_user['email'] = email
+        current_user['address'] = address
+        current_user['updated_at'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        
+        # Cập nhật session
+        session['user_name'] = full_name
+        
+        # Lưu lại
+        users_data['users'][user_index] = current_user
+        save_users(users_data)
+        
+        # Chuẩn bị user_info để render
+        user_info = {
+            'username': current_user.get('username'),
+            'full_name': current_user.get('full_name', ''),
+            'phone': current_user.get('phone', ''),
+            'email': current_user.get('email', ''),
+            'address': current_user.get('address', ''),
+            'created_at': current_user.get('created_at', ''),
+            'updated_at': current_user.get('updated_at', '')
+        }
+        
+        return render_template('profile.html', user=user_info, success='Cập nhật thông tin thành công!')
+    
+    # Chuẩn bị user_info để render
+    user_info = {
+        'username': current_user.get('username'),
+        'full_name': current_user.get('full_name', ''),
+        'phone': current_user.get('phone', ''),
+        'email': current_user.get('email', ''),
+        'address': current_user.get('address', ''),
+        'created_at': current_user.get('created_at', ''),
+        'updated_at': current_user.get('updated_at', '')
+    }
+    
+    return render_template('profile.html', user=user_info)
 
 @app.route('/create', methods=['GET', 'POST'])
 @login_required
@@ -236,6 +376,14 @@ def create():
         # Tạo ID sản phẩm bằng timestamp
         product_id = str(int(time.time() * 1000))
         
+        # Xử lý upload file cho quá trình sản xuất
+        production_files = request.files.getlist('production_files')
+        production_media = save_uploaded_files(production_files, product_id, 'production')
+        
+        # Xử lý upload file cho quá trình thu hoạch
+        harvest_files = request.files.getlist('harvest_files')
+        harvest_media = save_uploaded_files(harvest_files, product_id, 'harvest')
+        
         # Tạo mã QR
         qr_path = generate_qrcode(product_id, request.url_root)
         
@@ -250,6 +398,8 @@ def create():
             'production_process': production_process,
             'harvest_process': harvest_process,
             'storage_method': storage_method,
+            'production_media': production_media,  # Danh sách file media quá trình sản xuất
+            'harvest_media': harvest_media,  # Danh sách file media quá trình thu hoạch
             'qr_code': f'qrcodes/{product_id}.png',
             'created_by': session.get('user_id'),  # Lưu username của người tạo
             'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -262,8 +412,8 @@ def create():
         data['products'].append(product)
         save_data(data)
         
-        # Chuyển đến trang chi tiết sản phẩm
-        return redirect(url_for('product', product_id=product_id))
+        # Chuyển đến trang chi tiết sản phẩm của người tạo
+        return redirect(url_for('view_product', product_id=product_id))
     
     # Lấy thông tin user
     user_info = {
@@ -323,8 +473,20 @@ def delete_product(product_id):
                 os.remove(qr_path)
             except:
                 pass
-    
-    return redirect(url_for('manage'))
+        
+        # Xóa thư mục media của sản phẩm
+        production_media_dir = os.path.join(UPLOAD_DIR, 'production', product_id)
+        harvest_media_dir = os.path.join(UPLOAD_DIR, 'harvest', product_id)
+        
+        import shutil
+        for media_dir in [production_media_dir, harvest_media_dir]:
+            if os.path.exists(media_dir):
+                try:
+                    shutil.rmtree(media_dir)
+                except:
+                    pass
+        
+        return redirect(url_for('manage'))
 
 @app.route('/edit/<product_id>', methods=['GET', 'POST'])
 @login_required
@@ -360,6 +522,22 @@ def edit_product(product_id):
         product['harvest_process'] = request.form.get('harvest_process', '').strip()
         product['storage_method'] = request.form.get('storage_method', '').strip()
         product['updated_at'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        
+        # Xử lý upload file mới cho quá trình sản xuất
+        production_files = request.files.getlist('production_files')
+        new_production_media = save_uploaded_files(production_files, product_id, 'production')
+        if new_production_media:
+            if 'production_media' not in product:
+                product['production_media'] = []
+            product['production_media'].extend(new_production_media)
+        
+        # Xử lý upload file mới cho quá trình thu hoạch
+        harvest_files = request.files.getlist('harvest_files')
+        new_harvest_media = save_uploaded_files(harvest_files, product_id, 'harvest')
+        if new_harvest_media:
+            if 'harvest_media' not in product:
+                product['harvest_media'] = []
+            product['harvest_media'].extend(new_harvest_media)
         
         # Kiểm tra dữ liệu
         if not product['product_name']:
@@ -397,9 +575,54 @@ def product(product_id):
             break
     
     if not product:
-        return render_template('product.html', error='Không tìm thấy sản phẩm!', product=None)
+        return render_template('product.html', error='Không tìm thấy sản phẩm!', product=None, farmer_contact=None)
     
-    return render_template('product.html', product=product, error=None)
+    # Lấy thông tin liên hệ của người sản xuất
+    farmer_contact = None
+    created_by = product.get('created_by')
+    if created_by:
+        users_data = load_users()
+        for user in users_data.get('users', []):
+            if user.get('username') == created_by:
+                farmer_contact = {
+                    'full_name': user.get('full_name', ''),
+                    'phone': user.get('phone', ''),
+                    'email': user.get('email', ''),
+                    'address': user.get('address', '')
+                }
+                break
+    
+    return render_template('product.html', product=product, error=None, farmer_contact=farmer_contact)
+
+@app.route('/view/<product_id>')
+@login_required
+def view_product(product_id):
+    """Trang chi tiết sản phẩm cho người tạo - có nút sửa/xóa"""
+    current_user = session.get('user_id')
+    data = load_data()
+    products = data.get('products', [])
+    
+    # Tìm sản phẩm theo ID
+    product = None
+    for p in products:
+        if p.get('id') == product_id:
+            product = p
+            break
+    
+    if not product:
+        return render_template('view_product.html', error='Không tìm thấy sản phẩm!', product=None)
+    
+    # Kiểm tra quyền sở hữu
+    if product.get('created_by') != current_user:
+        return redirect(url_for('manage'))
+    
+    # Lấy thông tin user
+    user_info = {
+        'username': session.get('user_id'),
+        'full_name': session.get('user_name', session.get('user_id'))
+    }
+    
+    return render_template('view_product.html', product=product, error=None, user=user_info)
 
 if __name__ == '__main__':
     # Đảm bảo file data.json và users.json tồn tại

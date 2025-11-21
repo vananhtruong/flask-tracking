@@ -9,10 +9,11 @@
 <body>
     <nav class="navbar">
         <div class="navbar-content">
-            <a href="{{ url_for('index') }}" class="navbar-brand">🌾 Truy xuất Nguồn gốc</a>
+            <a href="{{ url_for('index') }}" class="navbar-brand">🌱 Truy xuất Nguồn gốc</a>
             <div class="navbar-actions">
                 {% if user %}
                     <span style="color: var(--primary-color); font-weight: 600;">👤 {{ user.full_name }}</span>
+                    <a href="{{ url_for('profile') }}" class="btn btn-secondary btn-small">Thông tin</a>
                     <a href="{{ url_for('manage') }}" class="btn btn-secondary btn-small">Quản lý</a>
                     <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-small">Đăng xuất</a>
                 {% else %}
@@ -37,7 +38,7 @@
                 </div>
                 {% endif %}
 
-                <form method="POST" action="{{ url_for('create') }}" class="product-form">
+                <form method="POST" action="{{ url_for('create') }}" class="product-form" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="product_name">Tên sản phẩm <span class="required">*</span></label>
                         <input 
@@ -108,6 +109,19 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="production_files">📸 Video/Hình ảnh quá trình sản xuất</label>
+                        <input 
+                            type="file" 
+                            id="production_files" 
+                            name="production_files" 
+                            multiple
+                            accept="image/*,video/*"
+                            class="form-input"
+                        >
+                        <small class="form-hint">Có thể chọn nhiều file. Hỗ trợ: JPG, PNG, GIF, MP4, MOV, AVI (tối đa 100MB/file)</small>
+                    </div>
+
+                    <div class="form-group">
                         <label for="harvest_process">Quá trình thu hoạch</label>
                         <textarea 
                             id="harvest_process" 
@@ -116,6 +130,19 @@
                             placeholder="Mô tả quá trình thu hoạch, phương pháp thu hoạch, thời điểm thu hoạch..."
                             class="form-input"
                         ></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="harvest_files">📸 Video/Hình ảnh quá trình thu hoạch</label>
+                        <input 
+                            type="file" 
+                            id="harvest_files" 
+                            name="harvest_files" 
+                            multiple
+                            accept="image/*,video/*"
+                            class="form-input"
+                        >
+                        <small class="form-hint">Có thể chọn nhiều file. Hỗ trợ: JPG, PNG, GIF, MP4, MOV, AVI (tối đa 100MB/file)</small>
                     </div>
 
                     <div class="form-group">
