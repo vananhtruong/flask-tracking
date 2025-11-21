@@ -164,6 +164,26 @@ def index():
     """Trang chính - hiển thị danh sách sản phẩm"""
     data = load_data()
     products = data.get('products', [])
+    
+    # Xử lý tìm kiếm
+    search_query = request.args.get('search', '').strip()
+    if search_query:
+        # Lọc sản phẩm theo từ khóa tìm kiếm
+        search_lower = search_query.lower()
+        filtered_products = []
+        for product in products:
+            # Tìm trong tên sản phẩm, tên người sản xuất, khu vực
+            product_name = product.get('product_name', '').lower()
+            farmer_name = product.get('farmer_name', '').lower()
+            production_area = product.get('production_area', '').lower()
+            
+            if (search_lower in product_name or 
+                search_lower in farmer_name or 
+                search_lower in production_area):
+                filtered_products.append(product)
+        
+        products = filtered_products
+    
     # Sắp xếp theo thời gian tạo mới nhất
     products.sort(key=lambda x: x.get('id', 0), reverse=True)
     
@@ -179,7 +199,7 @@ def index():
                 }
                 break
     
-    return render_template('index.html', products=products, user=user_info)
+    return render_template('index.html', products=products, user=user_info, search_query=search_query)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -569,13 +589,26 @@ def product(product_id):
     
     # Tìm sản phẩm theo ID
     product = None
-    for p in products:
+    product_index = -1
+    for i, p in enumerate(products):
         if p.get('id') == product_id:
             product = p
+            product_index = i
             break
     
     if not product:
         return render_template('product.html', error='Không tìm thấy sản phẩm!', product=None, farmer_contact=None)
+    
+    # Tăng số lượt quét QR
+    if 'scan_count' not in product:
+        product['scan_count'] = 0
+    product['scan_count'] = product.get('scan_count', 0) + 1
+    product['last_scan'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    
+    # Lưu lại
+    products[product_index] = product
+    data['products'] = products
+    save_data(data)
     
     # Lấy thông tin liên hệ của người sản xuất
     farmer_contact = None

@@ -12,7 +12,7 @@
             <a href="{{ url_for('index') }}" class="navbar-brand">🌱 Truy xuất Nguồn gốc</a>
             <div class="navbar-actions">
                 {% if user %}
-                    <span style="color: var(--primary-color); font-weight: 600;">👤 {{ user.full_name }}</span>
+                    <span class="user-name-mobile" style="color: var(--primary-color); font-weight: 600; display: block; width: 100%; text-align: center; margin-bottom: 0.5rem;">👤 {{ user.full_name }}</span>
                     <a href="{{ url_for('profile') }}" class="btn btn-secondary btn-small">Thông tin</a>
                     <a href="{{ url_for('manage') }}" class="btn btn-secondary btn-small">Quản lý</a>
                     <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-small">Đăng xuất</a>
@@ -43,6 +43,36 @@
 
         <main>
             <h2>Danh sách sản phẩm</h2>
+            
+            <div class="search-container">
+                <form method="GET" action="{{ url_for('index') }}" class="search-form">
+                    <input 
+                        type="text" 
+                        name="search" 
+                        value="{{ search_query if search_query else '' }}"
+                        placeholder="🔍 Tìm kiếm theo tên sản phẩm, người sản xuất, khu vực..." 
+                        class="search-input"
+                    >
+                    <button type="submit" class="btn btn-primary" style="white-space: nowrap;">
+                        Tìm kiếm
+                    </button>
+                    {% if search_query %}
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary" style="white-space: nowrap;">
+                        Xóa
+                    </a>
+                    {% endif %}
+                </form>
+                {% if search_query %}
+                <div class="search-results-info">
+                    Kết quả tìm kiếm cho: <strong>"{{ search_query }}"</strong>
+                    {% if products %}
+                        ({{ products|length }} sản phẩm)
+                    {% else %}
+                        (Không tìm thấy)
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
             
             {% if products %}
                 <div class="products-grid">
@@ -78,7 +108,7 @@
         </main>
 
         <footer>
-            <p>&copy; 2024 Hệ thống Truy xuất Nguồn gốc Nông sản</p>
+            <p>&copy; 2025 Hệ thống Truy xuất Nguồn gốc Nông sản</p>
         </footer>
     </div>
 </body>

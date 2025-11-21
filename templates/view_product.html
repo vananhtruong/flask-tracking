@@ -140,6 +140,23 @@
                                 <div class="info-value">{{ product.updated_at }}</div>
                             </div>
                             {% endif %}
+
+                            <div class="info-item" style="background: linear-gradient(135deg, rgba(46, 125, 50, 0.1) 0%, rgba(76, 175, 80, 0.1) 100%); border-left: 4px solid var(--primary-color); padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                                <div class="info-label">📊 Thống kê truy cập</div>
+                                <div class="info-value">
+                                    <p style="margin: 0.5rem 0; font-size: 1.1rem;">
+                                        <strong>👁️ Số lượt quét QR:</strong> 
+                                        <span style="color: var(--primary-color); font-size: 1.5rem; font-weight: 700; margin-left: 0.5rem;">{{ product.scan_count if product.scan_count else 0 }}</span>
+                                    </p>
+                                    {% if product.last_scan %}
+                                    <p style="margin: 0.5rem 0; color: var(--text-dark);">
+                                        <strong>🕐 Lần quét cuối:</strong> {{ product.last_scan }}
+                                    </p>
+                                    {% else %}
+                                    <p style="margin: 0.5rem 0; color: var(--text-light); font-style: italic;">Chưa có lượt quét nào</p>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
 
                         <div class="qr-section">
