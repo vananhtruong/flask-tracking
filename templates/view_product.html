@@ -9,16 +9,16 @@
 <body>
     <nav class="navbar">
         <div class="navbar-content">
-            <a href="{{ url_for('index') }}" class="navbar-brand">🌱 Truy xuất Nguồn gốc</a>
+            <a href="{{ url_for('main.index') }}" class="navbar-brand">🌱 Truy xuất Nguồn gốc</a>
             <div class="navbar-actions">
                 {% if user %}
                     <span style="color: var(--primary-color); font-weight: 600;">👤 {{ user.full_name }}</span>
-                    <a href="{{ url_for('profile') }}" class="btn btn-secondary btn-small">Thông tin</a>
-                    <a href="{{ url_for('manage') }}" class="btn btn-secondary btn-small">Quản lý</a>
-                    <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-small">Đăng xuất</a>
+                    <a href="{{ url_for('auth.profile') }}" class="btn btn-secondary btn-small">Thông tin</a>
+                    <a href="{{ url_for('products.manage') }}" class="btn btn-secondary btn-small">Quản lý</a>
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary btn-small">Đăng xuất</a>
                 {% else %}
-                    <a href="{{ url_for('login') }}" class="btn btn-secondary btn-small">Đăng nhập</a>
-                    <a href="{{ url_for('register') }}" class="btn btn-primary btn-small">Đăng ký</a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-secondary btn-small">Đăng nhập</a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-small">Đăng ký</a>
                 {% endif %}
             </div>
         </div>
@@ -29,7 +29,7 @@
             <div class="error-page">
                 <h1>❌ Lỗi</h1>
                 <p>{{ error }}</p>
-                <a href="{{ url_for('manage') }}" class="btn btn-primary">Quay lại quản lý</a>
+                <a href="{{ url_for('products.manage') }}" class="btn btn-primary">Quay lại quản lý</a>
             </div>
         {% elif product %}
             <header>
@@ -183,25 +183,25 @@
                         </div>
 
                         <div class="product-actions" style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid var(--bg-light);">
-                            <a href="{{ url_for('ai_report', product_id=product.id) }}" class="btn btn-primary btn-large" style="background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%); box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);">
+                            <a href="{{ url_for('products.ai_report', product_id=product.id) }}" class="btn btn-primary btn-large" style="background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%); box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);">
                                 🤖 Tạo báo cáo truy xuất AI
                             </a>
-                            <a href="{{ url_for('edit_product', product_id=product.id) }}" class="btn btn-primary btn-large">
+                            <a href="{{ url_for('products.edit_product', product_id=product.id) }}" class="btn btn-primary btn-large">
                                 ✏️ Sửa sản phẩm
                             </a>
-                            <a href="{{ url_for('delete_product', product_id=product.id) }}" 
+                            <a href="{{ url_for('products.delete_product', product_id=product.id) }}" 
                                class="btn btn-danger btn-large" 
                                onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">
                                 🗑️ Xóa sản phẩm
                             </a>
-                            <a href="{{ url_for('manage') }}" class="btn btn-secondary">← Quay lại quản lý</a>
+                            <a href="{{ url_for('products.manage') }}" class="btn btn-secondary">← Quay lại quản lý</a>
                         </div>
                     </div>
                 </div>
             </main>
 
             <footer>
-                <a href="{{ url_for('manage') }}" class="btn btn-link">← Quay lại quản lý sản phẩm</a>
+                <a href="{{ url_for('products.manage') }}" class="btn btn-link">← Quay lại quản lý sản phẩm</a>
             </footer>
         {% endif %}
     </div>

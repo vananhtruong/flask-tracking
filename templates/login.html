@@ -9,9 +9,9 @@
 <body>
     <nav class="navbar">
         <div class="navbar-content">
-            <a href="{{ url_for('index') }}" class="navbar-brand">🌱 Truy xuất Nguồn gốc</a>
+            <a href="{{ url_for('main.index') }}" class="navbar-brand">🌱 Truy xuất Nguồn gốc</a>
             <div class="navbar-actions">
-                <a href="{{ url_for('register') }}" class="btn btn-primary btn-small">Đăng ký</a>
+                <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-small">Đăng ký</a>
             </div>
         </div>
     </nav>
@@ -70,7 +70,7 @@
         </main>
 
         <footer>
-            <a href="{{ url_for('index') }}" class="btn btn-link">← Quay lại trang chủ</a>
+            <a href="{{ url_for('main.index') }}" class="btn btn-link">← Quay lại trang chủ</a>
         </footer>
     </div>
 </body>

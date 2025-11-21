@@ -9,16 +9,16 @@
 <body>
     <nav class="navbar">
         <div class="navbar-content">
-            <a href="{{ url_for('index') }}" class="navbar-brand">🌱 Truy xuất Nguồn gốc</a>
+            <a href="{{ url_for('main.index') }}" class="navbar-brand">🌱 Truy xuất Nguồn gốc</a>
             <div class="navbar-actions">
                 {% if user %}
                     <span style="color: var(--primary-color); font-weight: 600;">👤 {{ user.full_name }}</span>
-                    <a href="{{ url_for('profile') }}" class="btn btn-secondary btn-small">Thông tin</a>
-                    <a href="{{ url_for('manage') }}" class="btn btn-secondary btn-small">Quản lý</a>
-                    <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-small">Đăng xuất</a>
+                    <a href="{{ url_for('auth.profile') }}" class="btn btn-secondary btn-small">Thông tin</a>
+                    <a href="{{ url_for('products.manage') }}" class="btn btn-secondary btn-small">Quản lý</a>
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary btn-small">Đăng xuất</a>
                 {% else %}
-                    <a href="{{ url_for('login') }}" class="btn btn-secondary btn-small">Đăng nhập</a>
-                    <a href="{{ url_for('register') }}" class="btn btn-primary btn-small">Đăng ký</a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-secondary btn-small">Đăng nhập</a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-small">Đăng ký</a>
                 {% endif %}
             </div>
         </div>
@@ -38,7 +38,7 @@
                 </div>
                 {% endif %}
 
-                <form method="POST" action="{{ url_for('edit_product', product_id=product.id) }}" class="product-form" enctype="multipart/form-data">
+                <form method="POST" action="{{ url_for('products.edit_product', product_id=product.id) }}" class="product-form" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="product_name">Tên sản phẩm <span class="required">*</span></label>
                         <input 
@@ -202,14 +202,14 @@
                         <button type="submit" class="btn btn-primary btn-large">
                             💾 Lưu thay đổi
                         </button>
-                        <a href="{{ url_for('manage') }}" class="btn btn-secondary">Hủy</a>
+                        <a href="{{ url_for('products.manage') }}" class="btn btn-secondary">Hủy</a>
                     </div>
                 </form>
             </div>
         </main>
 
         <footer>
-            <a href="{{ url_for('manage') }}" class="btn btn-link">← Quay lại quản lý sản phẩm</a>
+            <a href="{{ url_for('products.manage') }}" class="btn btn-link">← Quay lại quản lý sản phẩm</a>
         </footer>
     </div>
 </body>

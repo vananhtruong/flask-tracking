@@ -354,11 +354,11 @@
     <div class="ai-report-wrapper">
         <nav class="navbar" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);">
             <div class="navbar-content">
-                <a href="{{ url_for('index') }}" class="navbar-brand" style="color: white;">🌱 Truy xuất Nguồn gốc</a>
+                <a href="{{ url_for('main.index') }}" class="navbar-brand" style="color: white;">🌱 Truy xuất Nguồn gốc</a>
                 <div class="navbar-actions">
                     {% if user %}
                         <span style="color: white; font-weight: 600;">👤 {{ user.full_name }}</span>
-                        <a href="{{ url_for('view_product', product_id=product.id) }}" class="btn btn-secondary btn-small" style="background: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255, 255, 255, 0.3);">← Quay lại</a>
+                        <a href="{{ url_for('products.view_product', product_id=product.id) }}" class="btn btn-secondary btn-small" style="background: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255, 255, 255, 0.3);">← Quay lại</a>
                     {% endif %}
                 </div>
             </div>
@@ -580,7 +580,7 @@
                     
                     <!-- Action buttons -->
                     <div class="action-buttons">
-                        <a href="{{ url_for('view_product', product_id=product.id) }}" class="btn btn-secondary">
+                        <a href="{{ url_for('products.view_product', product_id=product.id) }}" class="btn btn-secondary">
                             ← Quay lại chi tiết sản phẩm
                         </a>
                     </div>

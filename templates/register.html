@@ -9,9 +9,9 @@
 <body>
     <nav class="navbar">
         <div class="navbar-content">
-            <a href="{{ url_for('index') }}" class="navbar-brand">🌱 Truy xuất Nguồn gốc</a>
+            <a href="{{ url_for('main.index') }}" class="navbar-brand">🌱 Truy xuất Nguồn gốc</a>
             <div class="navbar-actions">
-                <a href="{{ url_for('login') }}" class="btn btn-secondary btn-small">Đăng nhập</a>
+                <a href="{{ url_for('auth.login') }}" class="btn btn-secondary btn-small">Đăng nhập</a>
             </div>
         </div>
     </nav>
@@ -30,7 +30,7 @@
                 </div>
                 {% endif %}
 
-                <form method="POST" action="{{ url_for('register') }}" class="product-form">
+                <form method="POST" action="{{ url_for('auth.register') }}" class="product-form">
                     <div class="form-group">
                         <label for="full_name">Họ và tên <span class="required">*</span></label>
                         <input 
@@ -129,7 +129,7 @@
         </main>
 
         <footer>
-            <a href="{{ url_for('index') }}" class="btn btn-link">← Quay lại trang chủ</a>
+            <a href="{{ url_for('main.index') }}" class="btn btn-link">← Quay lại trang chủ</a>
         </footer>
     </div>
 </body>

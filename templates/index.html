@@ -9,16 +9,16 @@
 <body>
     <nav class="navbar">
         <div class="navbar-content">
-            <a href="{{ url_for('index') }}" class="navbar-brand">🌱 Truy xuất Nguồn gốc</a>
+            <a href="{{ url_for('main.index') }}" class="navbar-brand">🌱 Truy xuất Nguồn gốc</a>
             <div class="navbar-actions">
                 {% if user %}
                     <span class="user-name-mobile" style="color: var(--primary-color); font-weight: 600; display: block; width: 100%; text-align: center; margin-bottom: 0.5rem;">👤 {{ user.full_name }}</span>
-                    <a href="{{ url_for('profile') }}" class="btn btn-secondary btn-small">Thông tin</a>
-                    <a href="{{ url_for('manage') }}" class="btn btn-secondary btn-small">Quản lý</a>
-                    <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-small">Đăng xuất</a>
+                    <a href="{{ url_for('auth.profile') }}" class="btn btn-secondary btn-small">Thông tin</a>
+                    <a href="{{ url_for('products.manage') }}" class="btn btn-secondary btn-small">Quản lý</a>
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary btn-small">Đăng xuất</a>
                 {% else %}
-                    <a href="{{ url_for('login') }}" class="btn btn-secondary btn-small">Đăng nhập</a>
-                    <a href="{{ url_for('register') }}" class="btn btn-primary btn-small">Đăng ký</a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-secondary btn-small">Đăng nhập</a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-small">Đăng ký</a>
                 {% endif %}
             </div>
         </div>
@@ -32,11 +32,11 @@
 
         <div class="actions">
             {% if user %}
-                <a href="{{ url_for('create') }}" class="btn btn-primary">➕ Thêm sản phẩm mới</a>
-                <a href="{{ url_for('manage') }}" class="btn btn-secondary">📋 Quản lý sản phẩm của tôi</a>
+                <a href="{{ url_for('products.create') }}" class="btn btn-primary">➕ Thêm sản phẩm mới</a>
+                <a href="{{ url_for('products.manage') }}" class="btn btn-secondary">📋 Quản lý sản phẩm của tôi</a>
             {% else %}
                 <div class="login-prompt">
-                    <p>🔒 Vui lòng <a href="{{ url_for('login') }}">đăng nhập</a> để thêm sản phẩm mới</p>
+                    <p>🔒 Vui lòng <a href="{{ url_for('auth.login') }}">đăng nhập</a> để thêm sản phẩm mới</p>
                 </div>
             {% endif %}
         </div>
@@ -45,7 +45,7 @@
             <h2>Danh sách sản phẩm</h2>
             
             <div class="search-container">
-                <form method="GET" action="{{ url_for('index') }}" class="search-form">
+                <form method="GET" action="{{ url_for('main.index') }}" class="search-form">
                     <input 
                         type="text" 
                         name="search" 
@@ -57,7 +57,7 @@
                         Tìm kiếm
                     </button>
                     {% if search_query %}
-                    <a href="{{ url_for('index') }}" class="btn btn-secondary" style="white-space: nowrap;">
+                    <a href="{{ url_for('main.index') }}" class="btn btn-secondary" style="white-space: nowrap;">
                         Xóa
                     </a>
                     {% endif %}
@@ -89,7 +89,7 @@
                             <p><strong>Ngày thu hoạch:</strong> {{ product.harvest_date or 'Chưa cập nhật' }}</p>
                         </div>
                         <div class="product-actions">
-                            <a href="{{ url_for('product', product_id=product.id) }}" class="btn btn-view">Xem chi tiết</a>
+                            <a href="{{ url_for('products.product', product_id=product.id) }}" class="btn btn-view">Xem chi tiết</a>
                         </div>
                     </div>
                     {% endfor %}
@@ -99,9 +99,9 @@
                     <p>📦 Chưa có sản phẩm nào trong hệ thống</p>
                     <p>Hãy bắt đầu bằng cách thêm sản phẩm mới!</p>
                     {% if user %}
-                        <a href="{{ url_for('create') }}" class="btn btn-primary">Thêm sản phẩm đầu tiên</a>
+                        <a href="{{ url_for('products.create') }}" class="btn btn-primary">Thêm sản phẩm đầu tiên</a>
                     {% else %}
-                        <a href="{{ url_for('login') }}" class="btn btn-primary">Đăng nhập để thêm sản phẩm</a>
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-primary">Đăng nhập để thêm sản phẩm</a>
                     {% endif %}
                 </div>
             {% endif %}
