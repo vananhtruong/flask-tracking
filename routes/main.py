@@ -7,9 +7,7 @@ main_bp = Blueprint('main', __name__)
 @main_bp.route('/')
 def index():
     """Trang chính - hiển thị danh sách sản phẩm"""
-    from utils import load_data, load_users
-    
-    data = load_data()
+    data = utils.load_data()
     products = data.get('products', [])
     
     # Xử lý tìm kiếm
