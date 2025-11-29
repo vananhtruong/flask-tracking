@@ -928,3 +928,113 @@ input[type="file"]:focus {
         display: none !important;
     }
 }
+
+/* Plant Type Selector */
+.plant-type-selector {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.plant-type-option {
+    flex: 1;
+    min-width: 200px;
+    cursor: pointer;
+}
+
+.plant-type-option input[type="radio"] {
+    display: none;
+}
+
+.plant-type-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.25rem;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--bg-white);
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.plant-type-option input[type="radio"]:checked + .plant-type-label {
+    border-color: var(--primary-color);
+    background: linear-gradient(135deg, rgba(46, 125, 50, 0.05) 0%, rgba(76, 175, 80, 0.1) 100%);
+    box-shadow: 0 4px 15px rgba(46, 125, 50, 0.2);
+}
+
+.plant-type-label:hover {
+    border-color: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.plant-type-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.plant-type-text {
+    font-weight: 600;
+    color: var(--primary-dark);
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+}
+
+.plant-type-hint {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    font-weight: 400;
+}
+
+/* Plant Type Badge */
+.plant-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-left: 0.5rem;
+}
+
+.plant-type-badge.seasonal {
+    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+    color: #f57f17;
+    border: 1px solid #ffc107;
+}
+
+.plant-type-badge.perennial {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    color: #2e7d32;
+    border: 1px solid #4caf50;
+}
+
+@media (max-width: 480px) {
+    .plant-type-selector {
+        flex-direction: column;
+    }
+    
+    .plant-type-option {
+        min-width: 100%;
+    }
+    
+    .plant-type-label {
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 1rem;
+        padding: 1rem;
+    }
+    
+    .plant-type-icon {
+        font-size: 2rem;
+        margin-bottom: 0;
+    }
+    
+    .plant-type-text,
+    .plant-type-hint {
+        text-align: left;
+    }
+}

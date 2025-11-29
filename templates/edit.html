@@ -39,6 +39,7 @@
                 {% endif %}
 
                 <form method="POST" action="{{ url_for('products.edit_product', product_id=product.id) }}" class="product-form" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <div class="form-group">
                         <label for="product_name">Tên sản phẩm <span class="required">*</span></label>
                         <input 
@@ -65,9 +66,43 @@
                         >
                     </div>
 
+                    <div class="form-group">
+                        <label>🌿 Loại cây trồng</label>
+                        <div class="plant-type-selector">
+                            <label class="plant-type-option">
+                                <input 
+                                    type="radio" 
+                                    name="plant_type" 
+                                    value="seasonal" 
+                                    {{ 'checked' if not product.plant_type or product.plant_type == 'seasonal' else '' }}
+                                    onchange="updateDateLabels()"
+                                >
+                                <span class="plant-type-label">
+                                    <span class="plant-type-icon">🌾</span>
+                                    <span class="plant-type-text">Cây thời vụ</span>
+                                    <span class="plant-type-hint">Lúa, rau, ngô, đậu...</span>
+                                </span>
+                            </label>
+                            <label class="plant-type-option">
+                                <input 
+                                    type="radio" 
+                                    name="plant_type" 
+                                    value="perennial"
+                                    {{ 'checked' if product.plant_type == 'perennial' else '' }}
+                                    onchange="updateDateLabels()"
+                                >
+                                <span class="plant-type-label">
+                                    <span class="plant-type-icon">🌳</span>
+                                    <span class="plant-type-text">Cây lâu năm</span>
+                                    <span class="plant-type-hint">Cam, xoài, sầu riêng...</span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="planting_date">Ngày trồng</label>
+                            <label for="planting_date" id="planting_date_label">{{ '🌸 Ngày ra hoa' if product.plant_type == 'perennial' else '🌱 Ngày trồng' }}</label>
                             <input 
                                 type="date" 
                                 id="planting_date" 
@@ -78,7 +113,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="harvest_date">Ngày thu hoạch</label>
+                            <label for="harvest_date">✂️ Ngày thu hoạch</label>
                             <input 
                                 type="date" 
                                 id="harvest_date" 
@@ -212,6 +247,19 @@
             <a href="{{ url_for('products.manage') }}" class="btn btn-link">← Quay lại quản lý sản phẩm</a>
         </footer>
     </div>
+
+    <script>
+        function updateDateLabels() {
+            const plantType = document.querySelector('input[name="plant_type"]:checked').value;
+            const plantingDateLabel = document.getElementById('planting_date_label');
+            
+            if (plantType === 'perennial') {
+                plantingDateLabel.innerHTML = '🌸 Ngày ra hoa';
+            } else {
+                plantingDateLabel.innerHTML = '🌱 Ngày trồng';
+            }
+        }
+    </script>
 </body>
 </html>
 

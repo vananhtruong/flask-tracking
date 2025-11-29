@@ -16,6 +16,7 @@ def create():
         product_name = request.form.get('product_name', '').strip()
         # Lấy tên người đăng nhập từ session
         farmer_name = session.get('user_name', session.get('user_id', '')).strip()
+        plant_type = request.form.get('plant_type', 'seasonal').strip()  # seasonal hoặc perennial
         planting_date = request.form.get('planting_date', '').strip()
         harvest_date = request.form.get('harvest_date', '').strip()
         production_area = request.form.get('production_area', '').strip()
@@ -48,6 +49,7 @@ def create():
             'id': product_id,
             'product_name': product_name,
             'farmer_name': farmer_name,
+            'plant_type': plant_type,  # 'seasonal' (cây thời vụ) hoặc 'perennial' (cây lâu năm)
             'planting_date': planting_date,
             'harvest_date': harvest_date,
             'production_area': production_area,
@@ -150,6 +152,7 @@ def edit_product(product_id):
         # Cập nhật thông tin sản phẩm
         product['product_name'] = request.form.get('product_name', '').strip()
         # farmer_name không đổi vì đã được set khi tạo
+        product['plant_type'] = request.form.get('plant_type', 'seasonal').strip()  # seasonal hoặc perennial
         product['planting_date'] = request.form.get('planting_date', '').strip()
         product['harvest_date'] = request.form.get('harvest_date', '').strip()
         product['production_area'] = request.form.get('production_area', '').strip()

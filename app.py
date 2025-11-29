@@ -1,5 +1,6 @@
 """Flask Application - Truy xuất nguồn gốc nông sản"""
 from flask import Flask
+from flask_wtf.csrf import CSRFProtect
 import os
 import config
 import utils
@@ -9,6 +10,9 @@ from routes.products import products_bp
 
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
+
+# Bảo vệ CSRF
+csrf = CSRFProtect(app)
 
 # Đăng ký blueprints
 app.register_blueprint(main_bp)

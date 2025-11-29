@@ -24,7 +24,11 @@ def load_data():
         try:
             with open(config.DATA_FILE, 'r', encoding='utf-8') as f:
                 return json.load(f)
-        except:
+        except json.JSONDecodeError as e:
+            print(f"Lỗi đọc file JSON: {str(e)}")
+            return {}
+        except Exception as e:
+            print(f"Lỗi không xác định khi đọc data.json: {str(e)}")
             return {}
     else:
         # Tạo file mới với cấu trúc rỗng
@@ -33,8 +37,12 @@ def load_data():
 
 def save_data(data):
     """Lưu dữ liệu vào data.json"""
-    with open(config.DATA_FILE, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+    try:
+        with open(config.DATA_FILE, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"Lỗi khi lưu data.json: {str(e)}")
+        raise
 
 def load_users():
     """Đọc dữ liệu user từ users.json"""
@@ -42,7 +50,11 @@ def load_users():
         try:
             with open(config.USERS_FILE, 'r', encoding='utf-8') as f:
                 return json.load(f)
-        except:
+        except json.JSONDecodeError as e:
+            print(f"Lỗi đọc file users.json: {str(e)}")
+            return {}
+        except Exception as e:
+            print(f"Lỗi không xác định khi đọc users.json: {str(e)}")
             return {}
     else:
         # Tạo file mới với admin user mặc định
@@ -61,12 +73,30 @@ def load_users():
 
 def save_users(users_data):
     """Lưu dữ liệu user vào users.json"""
-    with open(config.USERS_FILE, 'w', encoding='utf-8') as f:
-        json.dump(users_data, f, ensure_ascii=False, indent=2)
+    try:
+        with open(config.USERS_FILE, 'w', encoding='utf-8') as f:
+            json.dump(users_data, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"Lỗi khi lưu users.json: {str(e)}")
+        raise
 
 def hash_password(password):
-    """Mã hóa mật khẩu (MD5 - đơn giản cho học tập)"""
-    return hashlib.md5(password.encode()).hexdigest()
+    """Mã hóa mật khẩu bằng bcrypt (an toàn)"""
+    import bcrypt
+    # Tạo salt và hash password
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
+    return hashed.decode('utf-8')
+
+def verify_password(password, hashed):
+    """Xác thực mật khẩu"""
+    import bcrypt
+    try:
+        return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
+    except:
+        # Fallback cho mật khẩu cũ dùng MD5 (migration)
+        old_hash = hashlib.md5(password.encode()).hexdigest()
+        return old_hash == hashed
 
 def login_required(f):
     """Decorator để yêu cầu đăng nhập"""
@@ -102,6 +132,19 @@ def save_uploaded_files(files, product_id, upload_type):
     
     for file in files:
         if file and file.filename and allowed_file(file.filename):
+            # Kiểm tra kích thước file
+            file.seek(0, os.SEEK_END)
+            file_size = file.tell()
+            file.seek(0)  # Reset về đầu file
+            
+            if file_size > config.MAX_FILE_SIZE:
+                print(f"File {file.filename} quá lớn ({file_size} bytes, tối đa {config.MAX_FILE_SIZE} bytes)")
+                continue
+            
+            if file_size == 0:
+                print(f"File {file.filename} rỗng")
+                continue
+            
             # Tạo tên file an toàn
             filename = secure_filename(file.filename)
             # Thêm timestamp để tránh trùng tên

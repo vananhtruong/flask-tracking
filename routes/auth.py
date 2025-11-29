@@ -16,11 +16,10 @@ def login():
             return render_template('login.html', error='Vui lòng điền đầy đủ thông tin!')
         
         users_data = utils.load_users()
-        hashed_password = utils.hash_password(password)
         
         # Tìm user
         for user in users_data.get('users', []):
-            if user.get('username') == username and user.get('password') == hashed_password:
+            if user.get('username') == username and utils.verify_password(password, user.get('password', '')):
                 # Đăng nhập thành công
                 session['user_id'] = username
                 session['user_name'] = user.get('full_name', username)

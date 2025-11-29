@@ -68,9 +68,20 @@
                                 <div class="info-value">{{ product.production_area or 'Chưa cập nhật' }}</div>
                             </div>
 
+                            <div class="info-item" style="margin-bottom: 1rem;">
+                                <div class="info-label">🌿 Loại cây trồng</div>
+                                <div class="info-value">
+                                    {% if product.plant_type == 'perennial' %}
+                                        <span class="plant-type-badge perennial">🌳 Cây lâu năm</span>
+                                    {% else %}
+                                        <span class="plant-type-badge seasonal">🌾 Cây thời vụ</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
                             <div class="info-row">
                                 <div class="info-item">
-                                    <div class="info-label">🌱 Ngày trồng</div>
+                                    <div class="info-label">{{ '🌸 Ngày ra hoa' if product.plant_type == 'perennial' else '🌱 Ngày trồng' }}</div>
                                     <div class="info-value">{{ product.planting_date or 'Chưa cập nhật' }}</div>
                                 </div>
 
