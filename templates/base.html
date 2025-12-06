@@ -13,14 +13,14 @@
     {# Open Graph / Facebook #}
     <meta property="og:type" content="{% block og_type %}website{% endblock %}">
     <meta property="og:url" content="{% block og_url %}{{ request.url_root }}{% endblock %}">
-    <meta property="og:title" content="{% block og_title %}{% block title %}Hệ thống Truy xuất Nguồn gốc Nông sản{% endblock %}{% endblock %}">
-    <meta property="og:description" content="{% block og_description %}{% block description %}Hệ thống quản lý và truy xuất nguồn gốc nông sản minh bạch{% endblock %}{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}Hệ thống Truy xuất Nguồn gốc Nông sản{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Hệ thống quản lý và truy xuất nguồn gốc nông sản minh bạch{% endblock %}">
     <meta property="og:image" content="{% block og_image %}{{ request.url_root }}static/style.css{% endblock %}">
     
     {# Twitter #}
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{% block twitter_title %}{% block title %}Hệ thống Truy xuất Nguồn gốc Nông sản{% endblock %}{% endblock %}">
-    <meta name="twitter:description" content="{% block twitter_description %}{% block description %}Hệ thống quản lý và truy xuất nguồn gốc nông sản minh bạch{% endblock %}{% endblock %}">
+    <meta name="twitter:title" content="{% block twitter_title %}Hệ thống Truy xuất Nguồn gốc Nông sản{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}Hệ thống quản lý và truy xuất nguồn gốc nông sản minh bạch{% endblock %}">
     
     {# Canonical URL #}
     <link rel="canonical" href="{% block canonical %}{{ request.url }}{% endblock %}">

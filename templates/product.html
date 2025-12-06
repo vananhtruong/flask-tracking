@@ -10,6 +10,14 @@
 
 {% block og_url %}{{ request.url_root }}product/{{ product.id if product else '' }}{% endblock %}
 
+{% block og_title %}{% if product %}{{ product.product_name }} - Truy xuất Nguồn gốc Nông sản{% else %}Sản phẩm không tồn tại{% endif %}{% endblock %}
+
+{% block og_description %}{% if product %}Thông tin chi tiết về {{ product.product_name }} từ {{ product.farmer_name }}{% if product.production_area %} - {{ product.production_area }}{% endif %}. Quét QR code để truy xuất nguồn gốc nông sản.{% else %}Sản phẩm không tồn tại trong hệ thống.{% endif %}{% endblock %}
+
+{% block twitter_title %}{% if product %}{{ product.product_name }} - Truy xuất Nguồn gốc Nông sản{% else %}Sản phẩm không tồn tại{% endif %}{% endblock %}
+
+{% block twitter_description %}{% if product %}Thông tin chi tiết về {{ product.product_name }} từ {{ product.farmer_name }}{% if product.production_area %} - {{ product.production_area }}{% endif %}. Quét QR code để truy xuất nguồn gốc nông sản.{% else %}Sản phẩm không tồn tại trong hệ thống.{% endif %}{% endblock %}
+
 {% block structured_data %}
 {% if product %}
 <script type="application/ld+json">

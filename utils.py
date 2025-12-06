@@ -23,17 +23,24 @@ def load_data():
     if os.path.exists(config.DATA_FILE):
         try:
             with open(config.DATA_FILE, 'r', encoding='utf-8') as f:
-                return json.load(f)
+                content = f.read().strip()
+                if not content:
+                    # File trống, tạo lại
+                    save_data({'products': []})
+                    return {'products': []}
+                return json.loads(content)
         except json.JSONDecodeError as e:
             print(f"Lỗi đọc file JSON: {str(e)}")
-            return {}
+            # File bị lỗi, tạo lại
+            save_data({'products': []})
+            return {'products': []}
         except Exception as e:
             print(f"Lỗi không xác định khi đọc data.json: {str(e)}")
-            return {}
+            return {'products': []}
     else:
         # Tạo file mới với cấu trúc rỗng
-        save_data({})
-        return {}
+        save_data({'products': []})
+        return {'products': []}
 
 def save_data(data):
     """Lưu dữ liệu vào data.json"""
@@ -49,13 +56,40 @@ def load_users():
     if os.path.exists(config.USERS_FILE):
         try:
             with open(config.USERS_FILE, 'r', encoding='utf-8') as f:
-                return json.load(f)
+                content = f.read().strip()
+                if not content:
+                    # File trống, tạo lại với admin user
+                    default_users = {
+                        'users': [
+                            {
+                                'username': 'admin',
+                                'password': hash_password('admin123'),  # Mật khẩu: admin123
+                                'full_name': 'Quản trị viên',
+                                'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                            }
+                        ]
+                    }
+                    save_users(default_users)
+                    return default_users
+                return json.loads(content)
         except json.JSONDecodeError as e:
             print(f"Lỗi đọc file users.json: {str(e)}")
-            return {}
+            # File bị lỗi, tạo lại với admin user
+            default_users = {
+                'users': [
+                    {
+                        'username': 'admin',
+                        'password': hash_password('admin123'),  # Mật khẩu: admin123
+                        'full_name': 'Quản trị viên',
+                        'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    }
+                ]
+            }
+            save_users(default_users)
+            return default_users
         except Exception as e:
             print(f"Lỗi không xác định khi đọc users.json: {str(e)}")
-            return {}
+            return {'users': []}
     else:
         # Tạo file mới với admin user mặc định
         default_users = {
