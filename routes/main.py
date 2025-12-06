@@ -1,6 +1,7 @@
 """Routes chính - trang chủ"""
-from flask import Blueprint, render_template, request, session, Response, url_for
+from flask import Blueprint, render_template, request, session, Response, url_for, send_from_directory
 from datetime import datetime
+import os
 import utils
 
 main_bp = Blueprint('main', __name__)
@@ -99,4 +100,9 @@ Disallow: /static/uploads/
 Sitemap: {base_url}/sitemap.xml
 """
     return Response(robots_txt, mimetype='text/plain')
+
+@main_bp.route('/googleb17c430127147f34.html')
+def google_verification():
+    """Route để Google Search Console verify website"""
+    return send_from_directory('static', 'googleb17c430127147f34.html')
 
