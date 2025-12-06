@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    {# SEO Meta Tags #}
+    <title>{% block title %}Hệ thống Truy xuất Nguồn gốc Nông sản{% endblock %}</title>
+    <meta name="description" content="{% block description %}Hệ thống quản lý và truy xuất nguồn gốc nông sản minh bạch, giúp người tiêu dùng theo dõi quá trình sản xuất và thu hoạch nông sản.{% endblock %}">
+    <meta name="keywords" content="{% block keywords %}truy xuất nguồn gốc, nông sản, QR code, quản lý nông sản, minh bạch nông sản, traceability{% endblock %}">
+    <meta name="author" content="Hệ thống Truy xuất Nguồn gốc Nông sản">
+    
+    {# Open Graph / Facebook #}
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:url" content="{% block og_url %}{{ request.url_root }}{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}{% block title %}Hệ thống Truy xuất Nguồn gốc Nông sản{% endblock %}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{% block description %}Hệ thống quản lý và truy xuất nguồn gốc nông sản minh bạch{% endblock %}{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{{ request.url_root }}static/style.css{% endblock %}">
+    
+    {# Twitter #}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block twitter_title %}{% block title %}Hệ thống Truy xuất Nguồn gốc Nông sản{% endblock %}{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}{% block description %}Hệ thống quản lý và truy xuất nguồn gốc nông sản minh bạch{% endblock %}{% endblock %}">
+    
+    {# Canonical URL #}
+    <link rel="canonical" href="{% block canonical %}{{ request.url }}{% endblock %}">
+    
+    {# Favicon #}
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    
+    {# Stylesheet #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    {# Structured Data (JSON-LD) #}
+    {% block structured_data %}{% endblock %}
+</head>
+<body>
+    {% block content %}{% endblock %}
+</body>
+</html>
+

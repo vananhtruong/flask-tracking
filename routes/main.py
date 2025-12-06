@@ -1,5 +1,6 @@
 """Routes chính - trang chủ"""
-from flask import Blueprint, render_template, request, session
+from flask import Blueprint, render_template, request, session, Response, url_for
+from datetime import datetime
 import utils
 
 main_bp = Blueprint('main', __name__)
@@ -36,4 +37,66 @@ def index():
     user_info = utils.get_user_info(session)
     
     return render_template('index.html', products=products, user=user_info, search_query=search_query)
+
+@main_bp.route('/sitemap.xml')
+def sitemap():
+    """Tạo sitemap.xml cho Google Search Console"""
+    base_url = request.url_root.rstrip('/')
+    data = utils.load_data()
+    products = data.get('products', [])
+    
+    # Tạo XML sitemap
+    sitemap_xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    sitemap_xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    
+    # Trang chủ
+    sitemap_xml += '  <url>\n'
+    sitemap_xml += f'    <loc>{base_url}/</loc>\n'
+    sitemap_xml += '    <changefreq>daily</changefreq>\n'
+    sitemap_xml += '    <priority>1.0</priority>\n'
+    sitemap_xml += '  </url>\n'
+    
+    # Các trang sản phẩm
+    for product in products:
+        product_id = product.get('id')
+        if product_id:
+            sitemap_xml += '  <url>\n'
+            sitemap_xml += f'    <loc>{base_url}/product/{product_id}</loc>\n'
+            # Lấy ngày cập nhật cuối cùng
+            updated_date = product.get('updated_at') or product.get('created_at', '')
+            if updated_date:
+                try:
+                    # Chuyển đổi format ngày nếu cần
+                    dt = datetime.strptime(updated_date, '%Y-%m-%d %H:%M:%S')
+                    sitemap_xml += f'    <lastmod>{dt.strftime("%Y-%m-%d")}</lastmod>\n'
+                except:
+                    pass
+            sitemap_xml += '    <changefreq>weekly</changefreq>\n'
+            sitemap_xml += '    <priority>0.8</priority>\n'
+            sitemap_xml += '  </url>\n'
+    
+    sitemap_xml += '</urlset>'
+    
+    return Response(sitemap_xml, mimetype='application/xml')
+
+@main_bp.route('/robots.txt')
+def robots():
+    """Tạo robots.txt để hướng dẫn Google bot"""
+    base_url = request.url_root.rstrip('/')
+    robots_txt = f"""User-agent: *
+Allow: /
+Allow: /product/
+Disallow: /login
+Disallow: /register
+Disallow: /create
+Disallow: /edit/
+Disallow: /delete/
+Disallow: /manage
+Disallow: /view/
+Disallow: /ai-report/
+Disallow: /static/uploads/
+
+Sitemap: {base_url}/sitemap.xml
+"""
+    return Response(robots_txt, mimetype='text/plain')
 

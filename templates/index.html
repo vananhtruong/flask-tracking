@@ -1,12 +1,54 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ thống Truy xuất Nguồn gốc Nông sản</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Hệ thống Truy xuất Nguồn gốc Nông sản - Quản lý và Theo dõi Nông sản{% endblock %}
+
+{% block description %}Hệ thống quản lý và truy xuất nguồn gốc nông sản minh bạch. Quét QR code để xem thông tin chi tiết về quá trình sản xuất, thu hoạch và nguồn gốc nông sản.{% endblock %}
+
+{% block keywords %}truy xuất nguồn gốc, nông sản, QR code, quản lý nông sản, minh bạch nông sản, traceability, nông sản sạch, quản lý sản xuất nông nghiệp{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Hệ thống Truy xuất Nguồn gốc Nông sản",
+  "description": "Hệ thống quản lý và truy xuất nguồn gốc nông sản minh bạch",
+  "url": "{{ request.url_root }}",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "{{ request.url_root }}?search={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+{% if products %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Danh sách sản phẩm nông sản",
+  "description": "Danh sách các sản phẩm nông sản có thể truy xuất nguồn gốc",
+  "numberOfItems": {{ products|length }},
+  "itemListElement": [
+    {% for product in products %}
+    {
+      "@type": "ListItem",
+      "position": {{ loop.index }},
+      "item": {
+        "@type": "Product",
+        "name": "{{ product.product_name }}",
+        "description": "Nông sản từ {{ product.farmer_name }}{% if product.production_area %} - {{ product.production_area }}{% endif %}",
+        "url": "{{ request.url_root }}product/{{ product.id }}"
+      }
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>
+{% endif %}
+{% endblock %}
+
+{% block content %}
     <nav class="navbar">
         <div class="navbar-content">
             <a href="{{ url_for('main.index') }}" class="navbar-brand">🌱 Truy xuất Nguồn gốc</a>
@@ -111,7 +153,6 @@
             <p>&copy; 2025 Hệ thống Truy xuất Nguồn gốc Nông sản</p>
         </footer>
     </div>
-</body>
-</html>
+{% endblock %}
 
 

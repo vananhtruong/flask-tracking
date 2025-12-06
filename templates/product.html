@@ -1,12 +1,52 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chi tiết sản phẩm - Truy xuất Nguồn gốc</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}{% if product %}{{ product.product_name }} - Truy xuất Nguồn gốc Nông sản{% else %}Sản phẩm không tồn tại{% endif %}{% endblock %}
+
+{% block description %}{% if product %}Thông tin chi tiết về {{ product.product_name }} từ {{ product.farmer_name }}{% if product.production_area %} - {{ product.production_area }}{% endif %}. Quét QR code để truy xuất nguồn gốc nông sản.{% else %}Sản phẩm không tồn tại trong hệ thống.{% endif %}{% endblock %}
+
+{% block keywords %}{% if product %}{{ product.product_name }}, {{ product.farmer_name }}, truy xuất nguồn gốc, nông sản{% if product.production_area %}, {{ product.production_area }}{% endif %}{% endif %}{% endblock %}
+
+{% block og_type %}product{% endblock %}
+
+{% block og_url %}{{ request.url_root }}product/{{ product.id if product else '' }}{% endblock %}
+
+{% block structured_data %}
+{% if product %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "{{ product.product_name }}",
+  "description": "Nông sản {{ product.product_name }} từ {{ product.farmer_name }}{% if product.production_area %} - {{ product.production_area }}{% endif %}",
+  "url": "{{ request.url_root }}product/{{ product.id }}",
+  "brand": {
+    "@type": "Brand",
+    "name": "{{ product.farmer_name }}"
+  },
+  "manufacturer": {
+    "@type": "Organization",
+    "name": "{{ product.farmer_name }}"
+  }{% if product.production_area %},
+  "productionLocation": {
+    "@type": "Place",
+    "name": "{{ product.production_area }}"
+  }{% endif %}{% if product.harvest_date %},
+  "releaseDate": "{{ product.harvest_date }}"{% endif %}{% if farmer_contact and farmer_contact.phone %},
+  "offers": {
+    "@type": "Offer",
+    "availability": "https://schema.org/InStock",
+    "seller": {
+      "@type": "Person",
+      "name": "{{ product.farmer_name }}",
+      "telephone": "{{ farmer_contact.phone }}"
+    }
+  }{% endif %}
+}
+</script>
+{% endif %}
+{% endblock %}
+
+{% block content %}
     <nav class="navbar">
         <div class="navbar-content">
             <a href="{{ url_for('main.index') }}" class="navbar-brand">🌱 Truy xuất Nguồn gốc</a>
@@ -178,6 +218,5 @@
             </footer>
         {% endif %}
     </div>
-</body>
-</html>
+{% endblock %}
 
